@@ -17,10 +17,10 @@ public class Program
         // Force LNLNetLoggerAdapterToBeCreated // TODO: Is this the best path?
         var logger = host.Services.GetService<LNLNetLoggerAdapter>();
         var sender = host.Services.GetService<ClientService>();
-
+        
         while (ShouldRun)
         {
-            var line = Console.ReadLine()?.ToLower();
+            var line = await Console.In.ReadLineAsync(); 
             if (line == null)
                 continue;
 
