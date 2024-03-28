@@ -12,23 +12,10 @@ public class Program
     {
         var host = CreateHostBuilder(args).Build();
 
-        await host.StartAsync();
-
         // Force LNLNetLoggerAdapterToBeCreated // TODO: Is this the best path?
         var logger = host.Services.GetService<LNLNetLoggerAdapter>();
-        var sender = host.Services.GetService<ClientService>();
-        
-        while (ShouldRun)
-        {
-            var line = await Console.In.ReadLineAsync(); 
-            if (line == null)
-                continue;
 
-            if (!string.IsNullOrEmpty(line) && sender != null)
-                sender.Send(line);
-        }
-
-        await host.StopAsync();
+        await host.RunAsync();
     }
 
     static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -37,7 +24,10 @@ public class Program
         {
             var env = hostingContext.HostingEnvironment;
 
+            // What does this actually do?
             config.AddEnvironmentVariables();
+
+            //TODO: Can we make this automatic?
             config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
         })
@@ -47,23 +37,20 @@ public class Program
             services.AddOptions<ServerServiceOptions>().Bind(hostContext.Configuration.GetSection(nameof(ServerServiceOptions)));
             services.AddOptions<ClientServiceOptions>().Bind(hostContext.Configuration.GetSection(nameof(ClientServiceOptions)));
 
-            //TODO: can we do this in a better way?
+            //TODO: can we do this in a better way, its got a lot of. stuff
             var appOptions = hostContext.Configuration.GetSection(nameof(AppOptions)).Get<AppOptions>();
-
-            // https://stackoverflow.com/questions/52036998/how-do-i-get-a-reference-to-an-ihostedservice-via-dependency-injection-in-asp-ne
+            
             if (appOptions?.ClientEnabled ?? true)
             {
-                services.AddSingleton<ClientService>();
-                services.AddHostedService(provider => provider.GetRequiredService<ClientService>());
+                services.AddHostedSingleton<ClientService>();
+                services.AddHostedSingleton<InputService>();
             }
                 
             if (appOptions?.ServerEnabled ?? true)
             {
-                services.AddSingleton<ServerService>();
-                services.AddHostedService(provider => provider.GetRequiredService<ServerService>());
+                services.AddHostedSingleton<ServerService>();
             }
-
-
+            
             services.AddLogging();
         }).UseConsoleLifetime();
 }

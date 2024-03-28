@@ -12,7 +12,7 @@ public sealed class ClientServiceOptions : LNLClientOptions
     public string RemoteAddress { get; set; } = string.Empty;
 }
 
-internal class ClientService : BackgroundService
+public class ClientService : BackgroundService
 {
     private LNLClient _client;
     private ClientServiceOptions Options;
