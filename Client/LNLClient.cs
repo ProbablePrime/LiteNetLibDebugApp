@@ -5,10 +5,7 @@ using System.Net;
 
 namespace LiteNetLibDebugApp;
 
-public class LNLClientOptions: LNLConnectionOptions
-{
-
-}
+public class LNLClientOptions: LNLConnectionOptions {}
 
 public class LNLClient : LNLConnection
 {

@@ -5,11 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace LiteNetLibDebugApp;
 
-public sealed class ServerServiceOptions : LNLServerOptions
-{
-    // No-op right now
-}
-
+public sealed class ServerServiceOptions : LNLServerOptions { }
 
 internal class ServerService : BackgroundService
 {

@@ -10,7 +10,7 @@ public class LNLNetLoggerAdapter : INetLogger
         { NetLogLevel.Info, LogLevel.Information },
         {NetLogLevel.Error, LogLevel.Error },
         {NetLogLevel.Warning, LogLevel.Warning },
-        // Trace is problematic in LogLevel land, redirect trace to Debug for the moment
+        // Trace is rarely ever turned on in logging, redirect trace to debug for now.
         {NetLogLevel.Trace, LogLevel.Debug },
     };
 

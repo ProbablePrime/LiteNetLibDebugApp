@@ -7,17 +7,6 @@ using System.Net.Sockets;
 
 namespace LiteNetLibDebugApp;
 
-public class MessageEventArgs {
-    public readonly int PeerId;
-    public readonly string Message;
-
-    public MessageEventArgs(int peerId, string message)
-    {
-        PeerId = peerId;
-        Message = message;
-    }
-}
-
 public class LNLConnectionOptions
 {
     public int LocalPort { get; set; } = 0;
@@ -28,11 +17,9 @@ public class LNLConnection : INetEventListener
     protected readonly ILogger Log;
     protected readonly NetManager netManager;
 
-    protected readonly Dictionary<int, NetPeer> PeerMap = new Dictionary<int, NetPeer>();
-
     protected LNLConnectionOptions Options;
-    
-    public IEnumerable<NetPeer> Peers => PeerMap.Values;
+
+    public IEnumerable<NetPeer> Peers => netManager;
 
     public delegate void MessageEventHandler(NetPeer sender, string message);
 
@@ -48,6 +35,7 @@ public class LNLConnection : INetEventListener
 
         Log.LogInformation("Starting LNL Listener on: {port}", Options.LocalPort);
         netManager.Start(Options.LocalPort);
+        netManager.UseNativeSockets = true;
     }
     public void OnConnectionRequest(ConnectionRequest request)
     {
@@ -79,24 +67,19 @@ public class LNLConnection : INetEventListener
     public void OnPeerConnected(NetPeer peer)
     {
         Log.LogInformation("{peer} connected!", peer);
-        if (!PeerMap.ContainsKey(peer.Id))
-            PeerMap.Add(peer.Id, peer);
     }
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
         Log.LogInformation("{peer} disconnected!", peer);
-        if (PeerMap.ContainsKey(peer.Id))
-            PeerMap.Remove(peer.Id);
     }
 
     // Just basic Text for now
     public void Send(int id, string line)
     {
-        var found = PeerMap.TryGetValue(id, out var peer);
-        if (!found || peer == null)
+        var peer = netManager.GetPeerById(id);
+        if (peer == null)
             return;
-
 
         Send(peer, line);
     }
