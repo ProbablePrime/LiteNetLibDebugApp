@@ -32,10 +32,10 @@ public class LNLConnection : INetEventListener
         netManager = new NetManager(this);
         netManager.DisconnectTimeout = 30000;
         netManager.UnsyncedEvents = true;
+        netManager.UseNativeSockets = true;
 
         Log.LogInformation("Starting LNL Listener on: {port}", Options.LocalPort);
         netManager.Start(Options.LocalPort);
-        netManager.UseNativeSockets = true;
     }
     public void OnConnectionRequest(ConnectionRequest request)
     {
