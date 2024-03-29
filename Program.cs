@@ -15,7 +15,9 @@ public class Program
         var host = CreateHostBuilder(args).Build();
 
         // Force LNLNetLoggerAdapterToBeCreated // TODO: Is this the best path?
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
         var lnlLogger = host.Services.GetService<LNLNetLoggerAdapter>();
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
 
         await host.RunAsync();
     }
