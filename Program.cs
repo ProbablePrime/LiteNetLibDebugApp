@@ -3,6 +3,8 @@ using LiteNetLibDebugApp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using NReco.Logging.File;
 
 public class Program
 {
@@ -31,14 +33,22 @@ public class Program
         })
         .ConfigureServices((hostContext, services) =>
         {
-            services.AddSingleton<LNLNetLoggerAdapter>();
             
             //TODO: can this be automatic?
             services.AddOptions<ServerServiceOptions>().Bind(hostContext.Configuration.GetSection(nameof(ServerServiceOptions)));
             services.AddOptions<ClientServiceOptions>().Bind(hostContext.Configuration.GetSection(nameof(ClientServiceOptions)));
 
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddConsole();
+
+                var loggingSection = hostContext.Configuration.GetSection("Logging");
+                loggingBuilder.AddFile(loggingSection);
+            });
+
             //TODO: can we do this in a better way, its got a lot of.. stuff
             var appOptions = hostContext.Configuration.GetSection(nameof(AppOptions)).Get<AppOptions>();
+
             
             if (appOptions?.ClientEnabled ?? true)
             {
@@ -50,8 +60,8 @@ public class Program
             {
                 services.AddHostedSingleton<ServerService>();
             }
-            
-            services.AddLogging();
+
+            services.AddSingleton<LNLNetLoggerAdapter>();
         }).UseConsoleLifetime();
 }
 
