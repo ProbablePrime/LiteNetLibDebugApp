@@ -1,12 +1,43 @@
 # LiteNetLibDebugApp
 
-A very tiny, very minimal LNL Debugging/Chat App. 
+A very tiny, very minimal LNL Debugging/Chat App. When you run this app, it will start a very simple LNL Server and/or(see #Configuration), that can send messages between each other. It is designed to assist in LNl Debugging.
 
 ## Purpose
 1. Test LNL without the overhead of Resonite
 2. Be a learning tool for the [.NET Generic Host](https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host?tabs=appbuilder)
 3. Be as simple as possible.
 4. Use as much Microsoft/.NET Stuff as possible
+
+## Usage 
+1. Download and Build (Built Libraries coming soon)
+1. Edit appsettings.json as you'd like (see #Configuration)
+1. Run
+
+### Server
+The server has no interactive capabilities, it just takes incoming messages and sends them back out to any connected users.
+
+### Client
+Once connected, type any message into the console and press enter, it will be sent to the user, which will hopefully return it back.
+
+## Configuration
+All application settings can be found in appsettings.json. Some common Configuration items are presented here to assist.
+
+- You can enable and disable the client/server side by setting the AppOptions.Server/Client Enabled properties to true/false
+- You can edit the ports of the client/server by editing that section.
+    - The Client configuration requires both a Local Listen Port and a Remote Connection Port and Remote Address to connect to.
+    - The Server configuration just requires a Local Listen Port.
+
+
+## Recommendations
+We recommend using this in the following way:
+1. Deploy a copy of this app to your "Server" machine
+1. Set the client to disabled on this server machine, set the ports appropriate
+1. Deploy a copy of this app to your "Client" machine
+1. Set the Client to connect to the machine and port from the previous steps
+1. Run the server
+1. Run the client
+
+You should have a valid connection at this point.
 
 ## Guidelines for contributing
 1. Avoid non System.* or Microsoft.* packages.
@@ -38,3 +69,4 @@ I won't / this project won't:
 ## Might
 1. LNL Hole Punching and Relaying
 1. Usernames to make this a "Real" chat room. (I'll probably just use the machine name)
+1. File based Logging
