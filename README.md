@@ -13,20 +13,25 @@ A very tiny, very minimal LNL Debugging/Chat App. When you run this app, it will
 1. Edit appsettings.json as you'd like (see #Configuration)
 1. Run
 
+### Configuration
+Application settings can be found in appsettings.json. Some common Configuration items are explained here to assist, but the options should be fairly self-explanatory.
+
+You can:
+- Enable and disable the client/server side by setting the AppOptions.Server/Client Enabled properties to true/false
+- Edit the ports of the client/server by editing that section.
+    - The Client configuration requires both a Local Listen Port and a Remote Connection Port and Remote Address to connect to.
+    - The Server configuration just requires a Local Listen Port.
+
+You can also use CLI flags, if you want to, to do this:
+1. Disable both the client and server in the `appsettings.json` file
+1. Run the application using `--server=true` or `--client=true` to selectively run the app as a client and/or server
+
+## Operation
 ### Server
 The server has no interactive capabilities, it just takes incoming messages and sends them back out to any connected users.
 
 ### Client
 Once connected, type any message into the console and press enter, it will be sent to the user, which will hopefully return it back.
-
-## Configuration
-All application settings can be found in appsettings.json. Some common Configuration items are presented here to assist.
-
-- You can enable and disable the client/server side by setting the AppOptions.Server/Client Enabled properties to true/false
-- You can edit the ports of the client/server by editing that section.
-    - The Client configuration requires both a Local Listen Port and a Remote Connection Port and Remote Address to connect to.
-    - The Server configuration just requires a Local Listen Port.
-
 
 ## Recommendations
 We recommend using this in the following way:
@@ -69,4 +74,15 @@ I won't / this project won't:
 ## Might
 1. LNL Hole Punching and Relaying
 1. Usernames to make this a "Real" chat room. (I'll probably just use the machine name)
-1. File based Logging
+
+
+## Resources
+When I write stuff like this I always like to keep a running list of resources where I've learnt information from, it helps with Searching and helps you see how difficult this was:
+- [Command Line Parsing](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.configuration.commandlineconfigurationextensions.addcommandline?view=dotnet-plat-ext-8.0#microsoft-extensions-configuration-commandlineconfigurationextensions-addcommandline(microsoft-extensions-configuration-iconfigurationbuilder-system-string()-system-collections-generic-idictionary((system-string-system-string)))): This was really confusing, till I read this specify version of AddCommandLine
+- [.NET Generic Host docs](https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host)
+- [Configuration](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration)
+- [Logging](https://learn.microsoft.com/en-us/dotnet/core/extensions/logging?tabs=command-line)
+- [Lite Net Lib](https://github.com/RevenantX/LiteNetLib)
+- [net-generic-host-boilerplate](https://github.com/marceln/net-generic-host-boilerplate)
+- [NReco.Logging.File](https://github.com/nreco/logging): This was the simplest file logger I could find, .NET itself doesn't have one and I didn't want to roll out SeriLog/NLog
+- [Options Pattern](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/options?view=aspnetcore-8.0)
