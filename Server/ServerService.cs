@@ -9,9 +9,9 @@ public sealed class ServerServiceOptions : LNLServerOptions { }
 
 internal class ServerService : BackgroundService
 {
-    private LNLServer _client;
-    private ServerServiceOptions Options;
-    private ILogger Log;
+    private readonly LNLServer _client;
+    private readonly ServerServiceOptions Options;
+    private readonly ILogger Log;
 
     public ServerService(ILoggerFactory logF, IOptions<ServerServiceOptions> options)
     {
@@ -36,7 +36,7 @@ internal class ServerService : BackgroundService
             if (peer == sender)
                 msg = "Echo: " + msg;
             Log.LogInformation("Sending recieved message to {peer} message: {message}", peer, msg);
-            _client.Send(peer, msg);
+            LNLConnection.Send(peer, msg);
         }
     }
 

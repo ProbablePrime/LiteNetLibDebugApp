@@ -5,9 +5,9 @@ namespace LiteNetLibDebugApp;
 
 public class InputService : BackgroundService
 {
-    private ILogger Log;
-    private IHostApplicationLifetime HostLifetime;
-    private ClientService Client;
+    private readonly ILogger Log;
+    private readonly IHostApplicationLifetime HostLifetime;
+    private readonly ClientService Client;
 
     public InputService(ILoggerFactory logF, IHostApplicationLifetime hostLifetime, ClientService client)
     {
@@ -20,7 +20,7 @@ public class InputService : BackgroundService
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Task.Run(InputLoop);
+        Task.Run(InputLoop, stoppingToken);
         return Task.CompletedTask;
     }
 

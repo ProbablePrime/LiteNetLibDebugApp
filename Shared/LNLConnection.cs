@@ -29,10 +29,12 @@ public class LNLConnection : INetEventListener
         Options = ioptions.Value;
         Log = log;
 
-        netManager = new NetManager(this);
-        netManager.DisconnectTimeout = 30000;
-        netManager.UnsyncedEvents = true;
-        netManager.UseNativeSockets = true;
+        netManager = new NetManager(this)
+        {
+            DisconnectTimeout = 30000,
+            UnsyncedEvents = true,
+            UseNativeSockets = true
+        };
 
         Log.LogInformation("Starting LNL Listener on: {port}", Options.LocalPort);
         netManager.Start(Options.LocalPort);
@@ -84,9 +86,9 @@ public class LNLConnection : INetEventListener
         Send(peer, line);
     }
 
-    public void Send(NetPeer peer, string line)
+    public static void Send(NetPeer peer, string line)
     {
-        NetDataWriter writer = new NetDataWriter();
+        NetDataWriter writer = new();
         writer.Put(line);
 
         peer.Send(writer, DeliveryMethod.ReliableOrdered);

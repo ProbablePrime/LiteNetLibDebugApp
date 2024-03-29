@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 namespace LiteNetLibDebugApp;
 
 public class LNLServerOptions : LNLConnectionOptions { }
-public class LNLServer : LNLConnection
+public class LNLServer(ILogger log, IOptions<LNLServerOptions> options) : LNLConnection(log, options)
 {
-    public LNLServer(ILogger log, IOptions<LNLServerOptions> options) : base(log, options) { }
 }

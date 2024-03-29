@@ -1,14 +1,14 @@
-﻿
-using LiteNetLibDebugApp;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NReco.Logging.File;
 
+namespace LiteNetLibDebugApp;
+
 public class Program
 {
-    static CancellationTokenSource stopRunning = new CancellationTokenSource();
+    static readonly CancellationTokenSource stopRunning = new();
     static bool ShouldRun => !stopRunning.IsCancellationRequested;
     public async static Task Main(string[] args)
     {

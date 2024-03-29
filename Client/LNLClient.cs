@@ -7,17 +7,12 @@ namespace LiteNetLibDebugApp;
 
 public class LNLClientOptions: LNLConnectionOptions {}
 
-public class LNLClient : LNLConnection
+public class LNLClient(ILogger log, IOptions<LNLClientOptions> options) : LNLConnection(log, options)
 {
     private NetPeer? serverPeer;
-    private IPEndPoint? endpoint;
-    public LNLClient(ILogger log, IOptions<LNLClientOptions> options) : base(log, options)
-    {
-    }
 
     public bool Connect(IPEndPoint to)
     {
-        endpoint = to;
         Log.LogInformation("Connecting to: {to}", to);
         serverPeer = netManager.Connect(to, Constants.CONNECTION_KEY);
         return true;

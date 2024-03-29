@@ -14,9 +14,9 @@ public sealed class ClientServiceOptions : LNLClientOptions
 
 public class ClientService : BackgroundService
 {
-    private LNLClient _client;
-    private ClientServiceOptions Options;
-    private ILogger Log;
+    private readonly LNLClient _client;
+    private readonly ClientServiceOptions Options;
+    private readonly ILogger Log;
     private IPEndPoint? endpoint = null;
 
     public ClientService(ILoggerFactory logF, IOptions<ClientServiceOptions> options)
