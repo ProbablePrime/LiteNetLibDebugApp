@@ -35,8 +35,7 @@ public class Program
         })
         .ConfigureServices((hostContext, services) =>
         {
-            
-            //TODO: can this be automatic?
+            //TODO: can this be automatic, its a little gross.
             services.AddOptions<ServerServiceOptions>().Bind(hostContext.Configuration.GetSection(nameof(ServerServiceOptions)));
             services.AddOptions<ClientServiceOptions>().Bind(hostContext.Configuration.GetSection(nameof(ClientServiceOptions)));
 
@@ -48,9 +47,8 @@ public class Program
                 loggingBuilder.AddFile(loggingSection);
             });
 
-            //TODO: can we do this in a better way, its got a lot of.. stuff
+            //TODO: can we do this in a better way, its got a lot of.. stuff, that makes it a little gross.
             var appOptions = hostContext.Configuration.GetSection(nameof(AppOptions)).Get<AppOptions>();
-
             
             if (appOptions?.ClientEnabled ?? true)
             {
@@ -64,7 +62,7 @@ public class Program
             }
 
             if (appOptions?.ClientEnabled != true && appOptions?.ServerEnabled != true)
-                throw new Exception("This app will not do anything without client or server enabled");
+                throw new Exception("This app will not do anything without a client or server enabled!");
 
             services.AddSingleton<LNLNetLoggerAdapter>();
         }).UseConsoleLifetime();
