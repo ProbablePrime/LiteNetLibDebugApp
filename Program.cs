@@ -26,10 +26,12 @@ public class Program
         {
             var env = hostingContext.HostingEnvironment;
 
-            config.AddEnvironmentVariables();
-
             config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+            config.AddEnvironmentVariables();
+
+            config.AddCommandLine(args, Constants.SWITCH_MAPPINGS);
         })
         .ConfigureServices((hostContext, services) =>
         {
@@ -60,6 +62,9 @@ public class Program
             {
                 services.AddHostedSingleton<ServerService>();
             }
+
+            if (appOptions?.ClientEnabled != true && appOptions?.ServerEnabled != true)
+                throw new Exception("This app will not do anything without client or server enabled");
 
             services.AddSingleton<LNLNetLoggerAdapter>();
         }).UseConsoleLifetime();
