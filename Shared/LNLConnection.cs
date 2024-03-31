@@ -7,10 +7,33 @@ using System.Net.Sockets;
 
 namespace LiteNetLibDebugApp;
 
+
+/// <summary>
+/// Global options for all LNL connections in this application
+/// </summary>
 public class LNLConnectionOptions
 {
+    /// <summary>
+    /// What port should the LNL connection use for the Local End of the connection?
+    /// </summary>
     public int LocalPort { get; set; } = 0;
+
+    /// <summary>
+    /// Should this connection be enabled?
+    /// </summary>
     public bool Enabled { get; set; } = true;
+
+    /// <inheritdoc cref="NetManager.DisconnectTimeout"/>
+    public int DisconnectTimeout { get; set; } = 30000; // 30k
+
+    /// <inheritdoc cref="NetManager.UseNativeSockets"/>
+    public bool UseNativeSockets { get; set; } = true;
+
+    /// <inheritdoc cref="NetManager.ChannelsCount"/>
+    public byte ChannelCount { get; set; } = 1;
+
+    /// <inheritdoc cref="NetManager.UpdateTime"/>
+    public int UpdateTime { get; set; } = 5;
 }
 public class LNLConnection : INetEventListener
 {
@@ -31,9 +54,13 @@ public class LNLConnection : INetEventListener
 
         netManager = new NetManager(this)
         {
-            DisconnectTimeout = 30000,
             UnsyncedEvents = true,
-            UseNativeSockets = true
+            UnconnectedMessagesEnabled = true,
+
+            UseNativeSockets = Options.UseNativeSockets,
+            DisconnectTimeout = Options.DisconnectTimeout,
+            ChannelsCount = Options.ChannelCount,
+            UpdateTime = Options.UpdateTime,
         };
 
         Log.LogInformation("Starting LNL Listener on: {port}", Options.LocalPort);
