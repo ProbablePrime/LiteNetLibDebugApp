@@ -22,9 +22,22 @@ public class LNLNetLoggerAdapter : INetLogger
     }
     public void WriteNet(NetLogLevel level, string str, params object[] args)
     {
+        // Filter out empty or whitespace-only messages to prevent blank lines
+        if (string.IsNullOrWhiteSpace(str))
+            return;
+
+        // Clean up the message to remove potential extra whitespace that could cause blank lines
+        str = CleanLogMessage(str);
+
 #pragma warning disable CA2254 // Template should be a static expression
         Log.Log(MapLevel(level), str, args);
 #pragma warning restore CA2254 // Template should be a static expression
+    }
+
+    private string CleanLogMessage(string message)
+    {
+        // Remove any leading/trailing whitespace and normalize internal whitespace
+        return message.Trim();
     }
 
     public LNLNetLoggerAdapter(ILoggerFactory loggerFactory)

@@ -1,0 +1,53 @@
+version: '3.8'
+
+networks:
+  lnl-test-a:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+  lnl-test-b:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
+
+services:
+  server:
+    image: ghcr.io/probableprime/litenetlibdebugapp:latest
+    networks:
+      lnl-test-a:
+        ipv4_address: 172.20.0.2
+      lnl-test-b:
+        ipv4_address: 172.21.0.2
+    environment:
+      - AppOptions__ServerEnabled=true
+      - AppOptions__ClientEnabled=false
+      - ServerServiceOptions__LocalPort=22110
+
+  client-a:
+    image: ghcr.io/probableprime/litenetlibdebugapp:latest
+    networks:
+      lnl-test-a:
+        ipv4_address: 172.20.0.3
+    environment:
+      - AppOptions__ServerEnabled=false
+      - AppOptions__ClientEnabled=true
+      - ClientServiceOptions__RemoteAddress=172.20.0.2
+      - ClientServiceOptions__RemotePort=22110
+    depends_on:
+      - server
+
+  client-b:
+    image: ghcr.io/probableprime/litenetlibdebugapp:latest
+    networks:
+      lnl-test-b:
+        ipv4_address: 172.21.0.3
+    environment:
+      - AppOptions__ServerEnabled=false
+      - AppOptions__ClientEnabled=true
+      - ClientServiceOptions__RemoteAddress=172.21.0.2
+      - ClientServiceOptions__RemotePort=22110
+    depends_on:
+      - server
