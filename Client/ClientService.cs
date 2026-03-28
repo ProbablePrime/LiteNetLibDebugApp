@@ -74,7 +74,7 @@ public class ClientService : BackgroundService
         var connected = await Start();
         if (!connected)
         {
-            Log.LogCritical("Connection failed to {Endpoint}", endpoint)
+            Log.LogCritical("Connection failed to {Endpoint}", endpoint);
             return;
         }
         
