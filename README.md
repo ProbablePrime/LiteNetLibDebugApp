@@ -13,6 +13,104 @@ A very tiny, very minimal LNL Debugging/Chat App. When you run this app, it will
 1. Edit appsettings.json as you'd like (see #Configuration)
 1. Run
 
+## Docker Support
+
+This application includes Docker support for containerized deployment.
+
+### Building the Docker Image
+
+```bash
+docker build -t litenetlib-debug-app .
+```
+
+### Running the Container
+
+#### Basic Usage (Server Mode)
+```bash
+docker run -p 22110:22110 litenetlib-debug-app
+```
+
+#### Client Mode
+```bash
+docker run -p 22111:22111 litenetlib-debug-app --ClientEnabled=true --ServerEnabled=false
+```
+
+#### Custom Configuration
+You can override configuration using environment variables:
+
+```bash
+docker run -p 22110:22110 \
+  -e "ServerServiceOptions__LocalPort=22110" \
+  -e "ClientServiceOptions__RemoteAddress=host.docker.internal" \
+  litenetlib-debug-app
+```
+
+#### Volume Mounting for Logs
+To persist logs outside the container:
+
+```bash
+docker run -p 22110:22110 \
+  -v $(pwd)/logs:/app/Logs \
+  litenetlib-debug-app
+```
+
+### Docker Compose Example
+
+Create a `docker-compose.yml` file:
+
+```yaml
+version: '3.8'
+services:
+  litenetlib-debug-app:
+    build: .
+    ports:
+      - "22110:22110"
+      - "22111:22111"
+    environment:
+      - ServerServiceOptions__LocalPort=22110
+      - ClientServiceOptions__RemoteAddress=host.docker.internal
+    volumes:
+      - ./logs:/app/Logs
+```
+
+Then run:
+```bash
+docker-compose up -d
+```
+
+## GitHub Packages
+
+This project automatically builds and publishes Docker images to GitHub Packages on every push to main/master and on tagged releases.
+
+### Pulling from GitHub Packages
+
+```bash
+docker pull ghcr.io/probableprime/litenetlibdebugapp:latest
+```
+
+### Running the Published Image
+
+```bash
+docker run -p 22110:22110 ghcr.io/probableprime/litenetlibdebugapp:latest
+```
+
+### Available Tags
+
+- `latest` - Latest build from main/master branch
+- `v{version}` - Tagged releases (e.g., `v1.0.0`)
+- `{branch-name}` - Build from specific branch
+- `{commit-sha}` - Build from specific commit
+
+### GitHub Actions Workflow
+
+The Docker image is automatically built and published via the GitHub Actions workflow located at `.github/workflows/docker-publish.yml`. The workflow:
+
+- Builds multi-platform images (linux/amd64, linux/arm64)
+- Publishes to GitHub Container Registry (ghcr.io)
+- Creates semantic version tags from git tags
+- Provides branch and commit-specific tags
+- Uses build caching for faster builds
+
 ### Configuration
 Application settings can be found in appsettings.json. Some common Configuration items are explained here to assist, but the options should be fairly self-explanatory.
 
