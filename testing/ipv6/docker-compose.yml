@@ -1,0 +1,55 @@
+version: '3.8'
+
+networks:
+  lnl-test-ipv6-a:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 2001:db8:1::/64
+
+  lnl-test-ipv6-b:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 2001:db8:2::/64
+
+services:
+  server:
+    image: ghcr.io/probableprime/litenetlibdebugapp:latest
+    networks:
+      lnl-test-ipv6-a:
+        ipv6_address: 2001:db8:1::2
+      lnl-test-ipv6-b:
+        ipv6_address: 2001:db8:2::2
+    environment:
+      - AppOptions__ServerEnabled=true
+      - AppOptions__ClientEnabled=false
+      - ServerServiceOptions__LocalPort=22110
+
+  client-a:
+    image: ghcr.io/probableprime/litenetlibdebugapp:latest
+    networks:
+      lnl-test-ipv6-a:
+        ipv6_address: 2001:db8:1::3
+    environment:
+      - AppOptions__ServerEnabled=false
+      - AppOptions__ClientEnabled=true
+      - ClientServiceOptions__RemoteAddress=2001:db8:1::2
+      - ClientServiceOptions__RemotePort=22110
+    depends_on:
+      - server
+
+  client-b:
+    image: ghcr.io/probableprime/litenetlibdebugapp:latest
+    networks:
+      lnl-test-ipv6-b:
+        ipv6_address: 2001:db8:2::3
+    environment:
+      - AppOptions__ServerEnabled=false
+      - AppOptions__ClientEnabled=true
+      - ClientServiceOptions__RemoteAddress=2001:db8:2::2
+      - ClientServiceOptions__RemotePort=22110
+    depends_on:
+      - server
