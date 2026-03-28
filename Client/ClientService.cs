@@ -24,7 +24,6 @@ public class ClientService : BackgroundService
         Log = logF.CreateLogger(nameof(ClientService));
         _client = new LNLClient(Log, options);
         _client.MessageRecieved += MessageRecieved;
-
         Options = options.Value;
     }
 
@@ -33,14 +32,36 @@ public class ClientService : BackgroundService
         Log.LogInformation("Recieved message from {sender} message {message}", sender, message);
     }
 
-    public void Start()
+    public async Task<bool> Start()
     {
         var address = IPAddress.Parse(Options.RemoteAddress);
         endpoint = new IPEndPoint(address, Options.RemotePort);
 
-        Log.LogInformation("ClientService Running , connecting to {remoteAddress}:{remotePort}", Options.RemoteAddress, Options.RemotePort);
+        Log.LogInformation("ClientService Running, connecting to {remoteAddress}:{remotePort}", Options.RemoteAddress, Options.RemotePort);
+
+        var tcs = new TaskCompletionSource<bool>();
+
+        _client.PeerConnected += peer =>
+        {
+            tcs.TrySetResult(true);
+        };
+
+        _client.PeerDisconnected += (peer, disconnectInfo) =>
+        {
+            if (disconnectInfo.Reason == DisconnectReason.ConnectionFailed)
+                tcs.TrySetResult(false);
+        };
 
         _client.Connect(endpoint);
+
+        var result = await tcs.Task;
+
+        if (result)
+            Log.LogInformation("Successfully connected to server");
+        else
+            Log.LogError("Failed to connect to server");
+
+        return result;
     }
 
     public void Send(string message)
@@ -48,9 +69,12 @@ public class ClientService : BackgroundService
         _client.Send(message);
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Start();
-        return Task.CompletedTask;
+        var connected = await Start();
+        if (!connected)
+            return;
+
+        await Task.Delay(Timeout.Infinite, stoppingToken);
     }
 }
