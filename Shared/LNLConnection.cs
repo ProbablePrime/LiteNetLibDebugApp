@@ -47,6 +47,9 @@ public class LNLConnection : INetEventListener
     public delegate void MessageEventHandler(NetPeer sender, string message);
 
     public event MessageEventHandler? MessageRecieved = null;
+
+    public bool IsRunning => netManager.IsRunning;
+
     public LNLConnection(ILogger log, IOptions<LNLConnectionOptions> ioptions)
     {
         Options = ioptions.Value;
@@ -119,5 +122,10 @@ public class LNLConnection : INetEventListener
         writer.Put(line);
 
         peer.Send(writer, DeliveryMethod.ReliableOrdered);
+    }
+
+    public void Stop()
+    {
+        netManager.Stop();
     }
 }
