@@ -34,6 +34,12 @@ public class LNLConnectionOptions
 
     /// <inheritdoc cref="NetManager.UpdateTime"/>
     public int UpdateTime { get; set; } = 5;
+
+    /// <inheritdoc cref="NetManager.ReconnectDelay"/>
+    public int ReconnectDelay { get; set; } = 500;
+
+    /// <inheritdoc cref="NetManager.MaxConnectAttempts"/>
+    public int MaxConnectAttempts { get; set; } = 10;
 }
 public class LNLConnection : INetEventListener
 {
@@ -47,6 +53,14 @@ public class LNLConnection : INetEventListener
     public delegate void MessageEventHandler(NetPeer sender, string message);
 
     public event MessageEventHandler? MessageRecieved = null;
+
+    public delegate void PeerEventHandler(NetPeer peer);
+
+    public delegate void PeerDisconnectedEventHandler(NetPeer peer, DisconnectInfo disconnectInfo);
+
+    public event PeerEventHandler? PeerConnected = null;
+
+    public event PeerDisconnectedEventHandler? PeerDisconnected = null;
 
     public bool IsRunning => netManager.IsRunning;
 
@@ -64,6 +78,8 @@ public class LNLConnection : INetEventListener
             DisconnectTimeout = Options.DisconnectTimeout,
             ChannelsCount = Options.ChannelCount,
             UpdateTime = Options.UpdateTime,
+            ReconnectDelay = Options.ReconnectDelay,
+            MaxConnectAttempts = Options.MaxConnectAttempts,
         };
 
         Log.LogInformation("Starting LNL Listener on: {port}", Options.LocalPort);
@@ -99,11 +115,13 @@ public class LNLConnection : INetEventListener
     public void OnPeerConnected(NetPeer peer)
     {
         Log.LogInformation("{peer} connected!", peer);
+        PeerConnected?.Invoke(peer);
     }
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
         Log.LogInformation("{peer} disconnected!", peer);
+        PeerDisconnected?.Invoke(peer, disconnectInfo);
     }
 
     // Just basic Text for now
