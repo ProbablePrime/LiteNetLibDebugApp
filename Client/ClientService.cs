@@ -73,8 +73,12 @@ public class ClientService : BackgroundService
     {
         var connected = await Start();
         if (!connected)
+        {
+            Log.LogCritical("Connection failed to {Endpoint}", endpoint)
             return;
-
+        }
+        
+        // Just leave the connection open :)
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }
 }
